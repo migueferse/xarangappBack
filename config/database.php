@@ -114,10 +114,15 @@ return [
 
         'mongodb' => [
             'driver'   => 'mongodb',
-            'dsn'      => env('DB_DSN', 'mongodb://localhost:27017'),
-            'database' => env('DB_DATABASE', 'mi_base_de_datos'),
+            'host'     => env('DB_HOST', '127.0.0.1'),
+            'port'     => env('DB_PORT', 27017),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'options'  => [
+                'database' => 'admin' // Necesario si usas autenticación en MongoDB
+            ]
         ],
-
     ],
 
     /*
