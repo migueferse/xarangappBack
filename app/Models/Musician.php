@@ -25,4 +25,6 @@ class Musician extends Model
     {
         return $this->belongsToMany(Event::class);
     }
+
+    protected $hidden = ['event_ids'];
 }

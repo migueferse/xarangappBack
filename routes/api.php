@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MusicianController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\InstrumentController;
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API funcionando correctamente']);
@@ -11,6 +12,7 @@ Route::get('/test', function () {
 
 Route::apiResource('musicians', MusicianController::class);
 Route::apiResource('events', EventController::class);
+Route::get('/instruments', [InstrumentController::class, 'index']);
 // Route::post('/events/{eventId}/assign-musician', [EventController::class, 'assignMusician']);
 
 

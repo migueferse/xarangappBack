@@ -18,4 +18,8 @@ class Event extends Model
     {
         return $this->belongsToMany(Musician::class);
     }
+
+    protected $with = ['musicians'];
+    protected $hidden = ['musician_ids'];
+
 }

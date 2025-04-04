@@ -46,7 +46,8 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        return response()->json(Event::findOrFail($id));
+        $event = Event::with('musicians')->findOrFail($id);
+        return response()->json($event);
     }
 
     /**
@@ -54,8 +55,25 @@ class EventController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name' => 'required|string',
+            'place' => 'required|string',
+            'date' => 'required|date',
+            'musicians' => 'array',
+            'musicians.*' => 'exists:musicians,_id'
+        ]);
+    
         $event = Event::findOrFail($id);
-        $event->update($request->all());
+        $event->update([
+            'name' => $request->name,
+            'place' => $request->place,
+            'date' => $request->date,
+        ]);
+    
+        if ($request->has('musicians')) {
+            $event->musicians()->sync($request->musicians);
+        }
+        
         return response()->json($event);
     }
 
