@@ -12,7 +12,7 @@ class MusicianController extends Controller
      */
     public function index()
     {
-        return response()->json(Musician::with('instrument')->get());
+        return response()->json(Musician::with('instrument', 'events')->get());
     }
 
     /**
@@ -49,7 +49,7 @@ class MusicianController extends Controller
      */
     public function show($id)
     {
-        return response()->json(Musician::with('instrument')->findOrFail($id));
+        return response()->json(Musician::with('instrument', 'events')->findOrFail($id));
     }
 
     /**
