@@ -12,21 +12,42 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API funcionando correctamente']);
 });
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::controller(AuthController::class)->group(function () {
+    Route::post('/register', 'register');
+    Route::post('/login', 'login');
+    Route::middleware('auth:sanctum')->post('/logout', 'logout');
+});
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::apiResource('musicians', MusicianController::class);
-    Route::apiResource('events', EventController::class);
-    Route::get('/instruments', [InstrumentController::class, 'index']);
-    Route::get('/scores', [ScoreController::class, 'index']);
-    Route::post('/scores', [ScoreController::class, 'store']);
-    Route::get('/scores/download/{id}', [ScoreController::class, 'download']);
-    Route::delete('/scores/{id}', [ScoreController::class, 'destroy']);    
+    Route::controller(MusicianController::class)->group(function () {
+        Route::get('/musicians', 'index')->middleware('can:viewAny,App\Models\Musician');
+        Route::get('/musicians/{musician}', 'show')->middleware('can:view,App\Models\Musician');
+        Route::middleware('can:create,App\Models\Musician')->post('/musicians', 'store');
+        Route::middleware('can:update,App\Models\Musician')->put('/musicians/{musician}', 'update');
+        Route::middleware('can:delete,App\Models\Musician')->delete('/musicians/{musician}', 'destroy');
+    });
+
+    Route::controller(EventController::class)->group(function () {
+        Route::get('/events', 'index')->middleware('can:viewAny,App\Models\Event');
+        Route::get('/events/{event}', 'show')->middleware('can:view,App\Models\Event');
+        Route::middleware('can:create,App\Models\Event')->post('/events', 'store');
+        Route::middleware('can:update,App\Models\Event')->put('/events/{event}', 'update');
+        Route::middleware('can:delete,App\Models\Event')->delete('/events/{event}', 'destroy');
+    });
+
+    Route::controller(InstrumentController::class)->group(function () {
+        Route::get('/instruments', 'index');
+    });
+
+    Route::controller(ScoreController::class)->group(function () {
+        Route::get('/scores', 'index');
+        Route::post('/scores', 'store');
+        Route::get('/scores/download/{id}', 'download');
+        Route::delete('/scores/{id}', 'destroy');
+    });
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
 });
 
