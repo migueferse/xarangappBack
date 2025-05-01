@@ -19,7 +19,7 @@ class EventPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Event $event): bool
+    public function view(User $user): bool
     {
         return true; // Todos los usuarios autenticados pueden ver los detalles
     }
@@ -35,7 +35,7 @@ class EventPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Event $event): bool
+    public function update(User $user): bool
     {
         return $user->role === 'admin'; // Solo los administradores pueden actualizar eventos
     }
@@ -43,7 +43,7 @@ class EventPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Event $event): bool
+    public function delete(User $user): bool
     {
         return $user->role === 'admin'; // Solo los administradores pueden eliminar eventos
     }

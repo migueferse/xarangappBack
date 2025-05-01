@@ -21,18 +21,18 @@ Route::controller(AuthController::class)->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(MusicianController::class)->group(function () {
         Route::get('/musicians', 'index')->middleware('can:viewAny,App\Models\Musician');
-        Route::get('/musicians/{musician}', 'show')->middleware('can:view,App\Models\Musician');
+        Route::get('/musicians/{id}', 'show')->middleware('can:view,App\Models\Musician');
         Route::middleware('can:create,App\Models\Musician')->post('/musicians', 'store');
-        Route::middleware('can:update,App\Models\Musician')->put('/musicians/{musician}', 'update');
-        Route::middleware('can:delete,App\Models\Musician')->delete('/musicians/{musician}', 'destroy');
+        Route::middleware('can:update,App\Models\Musician')->put('/musicians/{id}', 'update');
+        Route::middleware('can:delete,App\Models\Musician')->delete('/musicians/{id}', 'destroy');
     });
 
     Route::controller(EventController::class)->group(function () {
         Route::get('/events', 'index')->middleware('can:viewAny,App\Models\Event');
-        Route::get('/events/{event}', 'show')->middleware('can:view,App\Models\Event');
+        Route::get('/events/{id}', 'show')->middleware('can:view,App\Models\Event');
         Route::middleware('can:create,App\Models\Event')->post('/events', 'store');
-        Route::middleware('can:update,App\Models\Event')->put('/events/{event}', 'update');
-        Route::middleware('can:delete,App\Models\Event')->delete('/events/{event}', 'destroy');
+        Route::middleware('can:update,App\Models\Event')->put('/events/{id}', 'update');
+        Route::middleware('can:delete,App\Models\Event')->delete('/events/{id}', 'destroy');
     });
 
     Route::controller(InstrumentController::class)->group(function () {
