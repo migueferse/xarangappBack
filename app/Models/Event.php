@@ -11,15 +11,21 @@ class Event extends Model
     protected $collection = 'events';
 
     protected $fillable = [
-        'name', 'place', 'date', 'musicians'
+        'name', 'place', 'date',
     ];
 
     public function musicians()
     {
-        return $this->belongsToMany(Musician::class);
+        return $this->belongsToMany(Musician::class, 'event_musicians', 'event_id', 'musician_id')
+                    ->withPivot('status')
+                    ->wherePivot('status', 'accepted'); // Solo los músicos aceptados
+    }
+
+    public function invitations()
+    {
+        return $this->hasMany(EventMusician::class, 'event_id');
     }
 
     protected $with = ['musicians'];
     protected $hidden = ['musician_ids'];
-
 }

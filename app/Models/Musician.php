@@ -23,7 +23,14 @@ class Musician extends Model
 
     public function events()
     {
-        return $this->belongsToMany(Event::class);
+        return $this->belongsToMany(Event::class, 'event_musicians', 'musician_id', 'event_id')
+                    ->withPivot('status')
+                    ->wherePivot('status', 'accepted'); // Solo los eventos aceptados
+    }
+
+    public function eventInvitations()
+    {
+        return $this->hasMany(EventMusician::class, 'musician_id');
     }
 
     protected $hidden = ['event_ids'];
