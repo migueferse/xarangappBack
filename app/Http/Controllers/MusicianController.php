@@ -99,7 +99,7 @@ class MusicianController extends Controller
         // Verificar si el usuario autenticado tiene el rol de administrador
         if (isset($user->role) && $user->role === 'admin') {
             // Si es administrador, obtener todas las invitaciones pendientes con la información del evento
-            $pendingInvitations = EventMusician::with('event')->where('status', 'pending')->get();
+            $pendingInvitations = EventMusician::with(['event', 'musician'])->where('status', 'pending')->get();
         } else {
             // Si no es administrador, buscar el perfil del músico asociado al usuario por su email
             $musician = Musician::where('email', $user->email)->first();
@@ -108,7 +108,7 @@ class MusicianController extends Controller
                 // Obtener las invitaciones pendientes para este músico específico con la información del evento
                 $pendingInvitations = EventMusician::where('musician_id', $musician->_id)
                     ->where('status', 'pending')
-                    ->with('event')
+                    ->with(['event', 'musician'])
                     ->get();
             } else {
                 // Si no se encuentra el perfil del músico, devolver una colección vacía
