@@ -5,6 +5,7 @@ namespace App\Models;
 use MongoDB\Laravel\Eloquent\Model;
 use App\Models\Instrument;
 use App\Models\Event;
+use App\Models\EventMusician;
 
 
 class Musician extends Model
@@ -23,15 +24,15 @@ class Musician extends Model
 
     public function events()
     {
-        return $this->belongsToMany(Event::class, 'event_musicians', 'musician_id', 'event_id')
-                    ->withPivot('status')
-                    ->wherePivot('status', 'accepted'); // Solo los eventos aceptados
-    }
-
-    public function eventInvitations()
-    {
-        return $this->hasMany(EventMusician::class, 'musician_id');
+        return $this->belongsToMany(Event::class);
     }
 
     protected $hidden = ['event_ids'];
+
+    public function acceptedEvents()
+    {
+        return $this->hasMany(EventMusician::class, 'musician_id', '_id')
+                    ->where('status', 'accepted')
+                    ->with('event');
+    }
 }

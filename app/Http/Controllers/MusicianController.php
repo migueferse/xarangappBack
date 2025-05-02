@@ -54,7 +54,7 @@ class MusicianController extends Controller
     public function show($id)
     {
         // return response()->json(Musician::with('instrument', 'events')->findOrFail($id));
-        $musician = Musician::with('instrument', 'events')->findOrFail($id);
+        $musician = Musician::with(['instrument', 'acceptedEvents.event'])->findOrFail($id);
         return response()->json($musician);
     }
 

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
+use App\Models\Event;
+use App\Models\Musician;
 
 class EventMusician extends Model
 {
@@ -13,11 +15,11 @@ class EventMusician extends Model
 
     public function event()
     {
-        return $this->belongsTo(Event::class, 'event_id');
+        return $this->belongsTo(Event::class, 'event_id', '_id');
     }
 
     public function musician()
     {
-        return $this->belongsTo(Musician::class, 'musician_id');
+        return $this->belongsTo(Musician::class, 'musician_id', '_id')->with('instrument');
     }
 }

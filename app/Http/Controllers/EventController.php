@@ -13,7 +13,19 @@ class EventController extends Controller
      */
     public function index()
     {
-        return response()->json(Event::all());
+        {
+            $events = Event::with('acceptedMusicians.musician')->get();
+        
+            // Reemplazar la propiedad `musicians` con los que aceptaron
+            $events->transform(function ($event) {
+                $accepted = $event->acceptedMusicians->pluck('musician')->filter();
+                $event->musicians = $accepted->values(); // asignamos solo músicos aceptados
+                // unset($event->acceptedMusicians); // opcional: limpia respuesta
+                return $event;
+            });
+        
+            return response()->json($events);
+        }
     }
 
     /**
@@ -57,7 +69,7 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        $event = Event::with('musicians')->findOrFail($id);
+        $event = Event::with('acceptedMusicians.musician.instrument')->findOrFail($id);
         return response()->json($event);
     }
 
