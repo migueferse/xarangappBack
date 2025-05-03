@@ -12,6 +12,12 @@ class Score extends Model
     protected $fillable = [
         'title',
         'file_path',
-    ];    
+        'instrument_id',
+    ];
+
+    public function instrument()
+    {
+        return $this->belongsTo(Instrument::class, 'instrument_id', '_id');
+    }
 }
 
