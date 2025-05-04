@@ -27,11 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::middleware('can:update,App\Models\Musician')->put('/musicians/{id}', 'update');
         Route::middleware('can:delete,App\Models\Musician')->delete('/musicians/{id}', 'destroy');
 
-         // Nuevas rutas para las invitaciones de eventos
         Route::post('/events/{id}/accept', 'acceptEvent');
-        // Route::post('/events/{id}/accept',  function () {
-        //     return response()->json(['message' => 'API funcionando correctamente']);
-        // });
         Route::post('/events/{id}/reject', 'rejectEvent');
     });
 
@@ -41,7 +37,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::middleware('can:create,App\Models\Event')->post('/events', 'store');
         Route::middleware('can:update,App\Models\Event')->put('/events/{id}', 'update');
         Route::middleware('can:delete,App\Models\Event')->delete('/events/{id}', 'destroy');
-        // Route::middleware('can:update,App\Models\Event')->post('/events/{id}/invite', 'inviteMusician');
     });
 
     Route::controller(InstrumentController::class)->group(function () {

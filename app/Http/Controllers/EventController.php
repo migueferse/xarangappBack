@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventMusician;
+use App\Models\Musician;
 use Illuminate\Http\Request;
+use App\Mail\InvitationMail;
+use Illuminate\Support\Facades\Mail;
 
 class EventController extends Controller
 {
@@ -47,9 +50,6 @@ class EventController extends Controller
             'date' => $request->date,
         ]);
     
-        // if ($request->has('musicians')) {
-        //     $event->musicians()->attach($request->musicians);
-        // }
         if ($request->has('musicians') && is_array($request->musicians)) {
             foreach ($request->musicians as $musicianId) {
                 EventMusician::create([
@@ -57,6 +57,11 @@ class EventController extends Controller
                     'musician_id' => $musicianId,
                     'status' => 'pending',
                 ]);
+
+                $musician = Musician::find($musicianId);
+                if ($musician) {
+                    Mail::to($musician->email)->send(new InvitationMail($event, $musician));
+                }
             }
             return response()->json(['message' => 'Evento creado e invitaciones enviadas a los músicos.'], 201);
         }
@@ -93,11 +98,6 @@ class EventController extends Controller
             'date' => $request->date,
         ]);
     
-        // if ($request->has('musicians')) {
-        //     $event->musicians()->sync($request->musicians);
-        // }
-
-        // Sincronizar las invitaciones (esto podría necesitar una lógica más compleja dependiendo de tu UI)
         EventMusician::where('event_id', $event->id)->delete();
         if ($request->has('musicians') && is_array($request->musicians)) {
             foreach ($request->musicians as $musicianId) {
@@ -106,6 +106,11 @@ class EventController extends Controller
                     'musician_id' => $musicianId,
                     'status' => 'pending',
                 ]);
+
+                $musician = Musician::find($musicianId);
+                if ($musician) {
+                    Mail::to($musician->email)->send(new InvitationMail($event, $musician));
+                }
             }
         }
 
@@ -117,64 +122,10 @@ class EventController extends Controller
      */
     public function destroy($id)
     {
-        // Buscar el evento por ID
         $event = Event::findOrFail($id);
-
-        // Eliminar todas las invitaciones relacionadas
         $event->eventMusicians()->delete();
-
-        // Eliminar el evento
         $event->delete();
 
         return response()->json(['message' => 'Evento e invitaciones eliminados correctamente.']);
     }
-
-    /**
-     * Invite a musician to an event.
-     */
-    // public function inviteMusician(Request $request, Event $event)
-    // {
-    //     $request->validate([
-    //         'musician_id' => 'required|exists:musicians,_id',
-    //     ]);
-
-    //     $musicianId = $request->musician_id;
-
-    //     // Verificar si ya existe una invitación para este músico y evento
-    //     $existingInvitation = EventMusician::where('event_id', $event->id)
-    //                                       ->where('musician_id', $musicianId)
-    //                                       ->first();
-
-    //     if ($existingInvitation) {
-    //         return response()->json(['message' => 'El músico ya ha sido invitado a este evento.'], 409);
-    //     }
-
-    //     EventMusician::create([
-    //         'event_id' => $event->id,
-    //         'musician_id' => $musicianId,
-    //         'status' => 'pending',
-    //     ]);
-
-    //     return response()->json(['message' => 'Se ha enviado una invitación al músico para este evento.']);
-    // }    
-
-    // public function assignMusician(Request $request, $eventId)
-    // {
-    //     $event = Event::find($eventId);
-    //     if (!$event) {
-    //         return response()->json(['message' => 'Evento no encontrado'], 404);
-    //     }
-
-    //     $musician = Musician::find($request->musician_id);
-    //     if (!$musician) {
-    //         return response()->json(['message' => 'Músico no encontrado'], 404);
-    //     }
-
-    //     $event->push('musicians', $musician->_id, true);
-
-    //     return response()->json([
-    //         'message' => 'Músico asignado al evento correctamente',
-    //         'event' => $event
-    //     ]);
-    // }    
 }
